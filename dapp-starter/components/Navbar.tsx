@@ -4,10 +4,10 @@ import { Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WalletModal from "./WalletModal";
 import AccountModal from "./AccountModal";
+import { useAccount } from "@starknet-react/core";
 
 const Navbar = () => {
-  // Todo: Fetch Correct Address
-  const address = undefined;
+  const { address } = useAccount();
   const [showWalletModal, setShowWalletModal] = useState(false);
   const [showAccountModal, setShowAccountModal] = useState(false);
 

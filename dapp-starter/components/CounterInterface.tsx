@@ -7,9 +7,20 @@ import { RotateCcw } from "lucide-react";
 import { HashLoader } from "react-spinners";
 import IncreaseCountButton from "./IncreaseCountButton";
 import DecreaseCountButton from "./DecreaseCountButton";
+import { useContractFetch } from "@/app/hooks/use-blockchain";
+import { COUNTER_ABI } from "@/abi/counter_abi";
+import { useAccount } from "@starknet-react/core";
 
 const CounterInterface = () => {
+  const { address } = useAccount();
   const [amount, setAmount] = useState(0);
+  const {
+    readData: count,
+    dataRefetch: countRefetch,
+    readIsLoading: isLoadingCount,
+    readError,
+    readIsReFecthing,
+  } = useContractFetch(COUNTER_ABI, "get_count", []);
 
   return (
     <div className="max-w-2xl mx-auto space-y-8">
@@ -34,16 +45,22 @@ const CounterInterface = () => {
           >
             <HashLoader
               color="hsl(0 0% 15%)"
-              // TODO: Fix
-              loading={false}
+              loading={isLoadingCount || readIsReFecthing}
               size={80}
               aria-label="Loading Spinner"
               data-testid="loader"
             />
-            0
+            {count &&
+              !readError &&
+              !isLoadingCount &&
+              !readIsReFecthing &&
+              count}
           </div>
-          {/* TODO: Implement refetch */}
-          <Button variant="default" className="flex items-center gap-2">
+          <Button
+            variant="default"
+            onClick={() => countRefetch()}
+            className="flex items-center gap-2"
+          >
             <RotateCcw className="w-4 h-4" />
             Refresh Count
           </Button>
@@ -87,11 +104,11 @@ const CounterInterface = () => {
         <DecreaseCountButton disabled={true} amount={amount} />
       </div>
 
-      {/* {!address && (
+      {!address && (
         <div className="text-center text-muted-foreground text-sm bg-muted/30 p-4 rounded-lg border border-border">
           Connect your wallet to interact with the Starknet counter
         </div>
-      )} */}
+      )}
     </div>
   );
 };

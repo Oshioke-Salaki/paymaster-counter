@@ -7,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Copy, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAccount, useDisconnect } from "@starknet-react/core";
 
 interface AccountModalProps {
   isOpen: boolean;
@@ -14,16 +15,15 @@ interface AccountModalProps {
 }
 
 const AccountModal = ({ isOpen, onClose }: AccountModalProps) => {
-  // TODO: Get correct address
-  const address = "0x0456789";
-
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
   const copyAddress = () => {
     navigator.clipboard.writeText(address as string);
     toast("Address copied to clipboard");
   };
   const handleDisconnect = async () => {
     try {
-      // TODO Handle disconnect
+      disconnect();
       toast("Wallet disconnected");
       onClose();
     } catch (err) {
